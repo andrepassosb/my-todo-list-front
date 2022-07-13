@@ -16,18 +16,18 @@
         Criar Lista
       </button>
         <ListTodo
-          v-for="item in state.listTodo" :key="item._id"
+          v-for="item in store.Todos.allTodos" :key="item._id"
           :item="item"
         />
   </div>
 </template>
 
 <script>
-import { reactive, onBeforeMount } from 'vue'
+import { reactive, onBeforeMount, computed } from 'vue'
 import ListTodo from '@/components/Molecules/ListTodo.vue'
 import useStore from '@/hooks/useStore'
 import services from '@/services'
-import { setTodo, cleanTodos } from '@/store/todos'
+import { setTodo, cleanTodos , newTodo} from '@/store/todos'
 
 export default {
   name: 'ListView',
@@ -43,30 +43,30 @@ export default {
     })
 
     onBeforeMount(async () => {
-      // cleanTodos()
+      cleanTodos()
       const { data } = await services.todos.getAllLists()
       if (data && data.lists) {
-        state.listTodo = data.lists
+          setTodo(data.lists)
       }
     })
 
     async function addList () {
       const item = {
-        fake_id: Math.floor(Math.random() * Date.now()),
-        id: '',
-        user_id: state.userID,
-        title: '',
-        due_on: null,
-        status: 'pending',
+        _id: `NewItem-${Math.floor(Math.random() * Date.now())}`,
+        name: '',
+        users: [],
         edit: true
       }
-      setTodo([item])
+      newTodo(item)
     }
+
+    const allLists = computed(() => Object.keys(store.Todos.allTodos))
 
     return {
       store,
       state,
-      addList
+      addList,
+      allLists
     }
   }
 }

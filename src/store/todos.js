@@ -1,19 +1,35 @@
 import { reactive } from 'vue'
 
 const state = reactive({
-  allTodos: []
+  data: { allTodos: []}
 })
 
-export default state
+export default state.data
 
 export function setTodo (todos) {
-  state.allTodos = [...todos, ...state.allTodos]
+  state.data.allTodos = todos
+}
+
+export function newTodo (todo) {
+  state.data.allTodos.unshift(todo)
+}
+
+export function updateTodo (data) {
+  console.log('data',data._id)
+  state.data.allTodos.forEach(item => {
+    console.log('item',item._id)
+    if(item._id == data._id) {
+      console.log(item)
+      item = {item,...data}
+    }
+  });
+  console.log(state.data.allTodos)
 }
 
 export function deleteTodo (id) {
-  state.allTodos = state.allTodos.filter(t => t.fake_id !== id)
+  state.data.allTodos = state.data.allTodos.filter(t => t._id !== id)
 }
 
 export function cleanTodos () {
-  state.allTodos = []
+  state.data.allTodos = {}
 }

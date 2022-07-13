@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex px-4 align-items-center mb-2 mt-3">
+    <div class="d-flex px-4 align-items-center mb-2 mt-3" :id="state.id">
         <div class="icon" v-if="!state.edit" @click="state.edit = !state.edit">
             <img src="@/assets/icons/icon-pen.png" alt="pen">
         </div>
@@ -41,59 +41,74 @@
 <script>
 import { reactive, watch } from '@vue/runtime-core'
 import services from '@/services'
-import { deleteTodo } from '@/store/todos'
 import { useRouter } from 'vue-router'
+import useStore from '@/hooks/useStore'
+import { updateTodo, deleteTodo , newTodo } from '@/store/todos'
 
 export default {
   props: {
     item: {
-      type: Object
+      type: String
     },
     index: {
       type: Number
     }
   },
   setup (props) {
+    const store = useStore()
     const router = useRouter()
+
     const state = reactive({
       title: props.item.name,
       edit: !!props.item.edit,
+      id: props.item._id
     })
 
     async function saveChanges (changeEdit) {
       state.error = null
-      const item = {
-        name: state.title,
-      }
-      if (state.id) {
-        // await services.todos.updateTodo(state.id, item)
-      } else {
-        const newItem = {
-          ...item,        }
-        if (!state.error) {
-          state.loading = true
-          const response = await services.todos.createList(newItem)
-          console.log(response)
-          if (response.status && response.status === 201) {
-            if (changeEdit) state.edit = !state.edit
-          } else if(response.data?.message) {
-            state.error = response.data.message
-          }else {
-            state.error = 'Ocorreu um erro tente novamente.'
-          }
-          state.loading = false
+      state.loading = true
+
+      // FOR NEW LIST 
+      if (state.id.split('-')[0] === 'NewItem') {
+        const newItem = { name: state.title }
+        //Send request
+        const response = await services.todos.createList(newItem)
+
+        //If sucess
+        if (response.status && response.status === 201) {
+          deleteTodo(state.id)
+          newTodo(response.data.newList)
+        } 
+        //If error
+        else if(response.data?.message) {
+          state.error = response.data.message
+        }
+        //Else unknown erros 
+        else {
+          state.error = 'Ocorreu um erro tente novamente.'
         }
 
+      } else {
+        const updateList = {
+          _id: state.id,
+          name: state.title,
+          users: state.users
+        }
+        updateTodo(updateList)
+        await services.todos.updateList(updateList)
       }
+      state.loading = false
     }
 
     async function deleteItem () {
-      if (state.id) await services.todos.deleteTodo(state.id)
-      deleteTodo(props.item.fake_id)
+      if (state.id.split('-')[0] !== 'NewItem') {
+        await services.todos.deleteList(state.id)
+      }
+      deleteTodo(state.id)
     }
 
     async function goTodoPage(){
-      router.push({ name: 'todo', params: { listId: props.item._id } })
+      router.push({ name: 'todo', params: { listId: state.id } })
     }
 
     return {

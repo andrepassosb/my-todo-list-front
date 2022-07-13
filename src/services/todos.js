@@ -13,6 +13,18 @@ export default () => ({
 
     return response
   },
+  deleteList: (id) => {
+    const url = `list/${id}`
+    const response = requestApi(url, 'delete')
+
+    return response
+  },
+  updateList: (data) => {
+    const url = `list/${data._id}`
+    const response = requestApi(url, 'patch', data)
+
+    return response
+  },
   createTodo: (id, data) => {
     const url = `list/${id}/item`
     const response = requestApi(url, 'post', data)
