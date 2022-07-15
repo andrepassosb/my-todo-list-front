@@ -1,37 +1,36 @@
 <template>
-  <router-view :loadingHome="state.loadingHome"/>
-  <NavBar v-if="state.hasUserId"/>
-  <LoginBar v-else/>
+  <router-view :loadingHome="state.loadingHome" />
+  <NavBar v-if="state.hasUserId" />
+  <LoginBar v-else />
 </template>
 <script>
-import { onBeforeMount, reactive, watch } from 'vue'
-import NavBar from './components/Molecules/NavBar.vue'
-import LoginBar from './components/Molecules/LoginBar.vue'
-import { useRoute } from 'vue-router'
-import { setPosts } from '@/store/posts'
-import { setUser } from '@/store/users'
-import { setComments } from '@/store/comments'
-import services from '@/services'
-import useStore from '@/hooks/useStore'
+import { onBeforeMount, reactive, watch } from 'vue';
+import NavBar from './components/Molecules/NavBar.vue';
+import LoginBar from './components/Molecules/LoginBar.vue';
+import { useRoute } from 'vue-router';
+import useStore from '@/hooks/useStore';
 
 export default {
   components: {
     NavBar,
-    LoginBar
+    LoginBar,
   },
-  setup () {
-    const route = useRoute()
-    const store = useStore()
+  setup() {
+    const route = useRoute();
+    const store = useStore();
     const state = reactive({
       hasUserId: !!sessionStorage.getItem('access_token'),
-      loadingHome: false
-    })
-    watch(() => route.path, async () => {
-      state.hasUserId = !!sessionStorage.getItem('access_token')
-    })
+      loadingHome: false,
+    });
+    watch(
+      () => route.path,
+      async () => {
+        state.hasUserId = !!sessionStorage.getItem('access_token');
+      }
+    );
 
     onBeforeMount(async () => {
-      state.loadingHome = true
+      state.loadingHome = true;
       if (store.Posts.allposts.length === 0) {
         // const { data: allPosts } = await services.posts.getAllPosts()
         // setPosts(allPosts)
@@ -46,13 +45,13 @@ export default {
         // const { data: allComments } = await services.comments.getAllComments()
         // setComments(allComments)
       }
-      state.loadingHome = false
-    })
+      state.loadingHome = false;
+    });
     return {
-      state
-    }
-  }
-}
+      state,
+    };
+  },
+};
 </script>
 <style>
 #app {
@@ -66,28 +65,31 @@ export default {
   border: 1px solid rgb(239, 243, 244);
 }
 
-.border-botton-gray{
-    border-bottom: 1px solid rgb(239, 243, 244);
+.border-botton-gray {
+  border-bottom: 1px solid rgb(239, 243, 244);
 }
-.flex-basis-0{
+.flex-basis-0 {
   flex-basis: 0px;
 }
-.btn.btn-primary{
+.btn.btn-primary {
   background-color: rgb(29, 155, 240);
   border-color: rgba(255, 255, 255, 0.5);
 }
-.btn.btn-primary:hover{
+.btn.btn-primary:hover {
   background-color: rgb(68, 169, 236);
   border-color: rgba(255, 255, 255, 0.5);
 }
-.btn.btn-secondary{
+.btn.btn-secondary {
   background-color: rgb(239, 243, 244);
-  color:black;
+  color: black;
   border-color: rgba(255, 255, 255, 0.5);
 }
-.btn.btn-secondary:hover{
+.btn.btn-secondary:hover {
   border-color: rgba(255, 255, 255, 0.3);
   background-color: rgb(215, 219, 220);
-  color:#000
+  color: #000;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

@@ -7,81 +7,82 @@
       @click="addList"
       :disabled="state.loading"
       class="btn btn-primary rounded-pill"
-      >
-        <div class="spinner-border text-light"
-          v-if="state.loading"
-          
-          role="status">
-        </div>
-        Criar Lista
-      </button>
-        <ListTodo
-          v-for="item in store.Todos.allTodos" :key="item._id"
-          :item="item"
-        />
+    >
+      <div
+        class="spinner-border text-light"
+        v-if="state.loading"
+        role="status"
+      ></div>
+      Criar Lista
+    </button>
+    <ListTodo
+      v-for="item in store.Todos.allTodos"
+      :key="item._id"
+      :item="item"
+    />
   </div>
 </template>
 
 <script>
-import { reactive, onBeforeMount, computed } from 'vue'
-import ListTodo from '@/components/Molecules/ListTodo.vue'
-import useStore from '@/hooks/useStore'
-import services from '@/services'
-import { setTodo, cleanTodos , newTodo} from '@/store/todos'
+import { reactive, onBeforeMount, computed } from 'vue';
+import ListTodo from '@/components/Molecules/ListTodo.vue';
+import useStore from '@/hooks/useStore';
+import services from '@/services';
+import { setTodo, cleanTodos, newTodo } from '@/store/todos';
 
 export default {
   name: 'ListView',
   components: {
-    ListTodo
+    ListTodo,
   },
-  setup () {
-    const store = useStore()
+  setup() {
+    const store = useStore();
 
     const state = reactive({
       loading: false,
-      listTodo:[]
-    })
+      listTodo: [],
+    });
 
     onBeforeMount(async () => {
-      cleanTodos()
-      const { data } = await services.todos.getAllLists()
+      cleanTodos();
+      const { data } = await services.todos.getAllLists();
       if (data && data.lists) {
-          setTodo(data.lists)
+        setTodo(data.lists);
       }
-    })
+    });
 
-    async function addList () {
+    async function addList() {
       const item = {
         _id: `NewItem-${Math.floor(Math.random() * Date.now())}`,
         name: '',
         users: [],
-        edit: true
-      }
-      newTodo(item)
+        edit: true,
+      };
+      newTodo(item);
     }
 
-    const allLists = computed(() => Object.keys(store.Todos.allTodos))
+    const allLists = computed(() => Object.keys(store.Todos.allTodos));
 
     return {
       store,
       state,
       addList,
-      allLists
-    }
-  }
-}
+      allLists,
+    };
+  },
+};
 </script>
 
 <style>
-.TodoView{
+.TodoView {
   margin-bottom: 55px;
 }
-.page-title{
+.page-title {
   padding-left: 16px;
   padding-right: 16px;
   height: 53px;
 }
-.page-title h2{
+.page-title h2 {
   font-weight: 700;
   font-size: 1.25rem;
   text-align: left;
