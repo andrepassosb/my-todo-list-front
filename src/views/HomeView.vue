@@ -3,7 +3,7 @@
     <div class="page-title d-flex">
       <h2 class="my-auto">Página Inicial</h2>
     </div>
-    <img src="../assets/IMG_2448.jpg" alt="" />
+    <img style="max-width: 100vw" src="../assets/IMG_2448.jpg" alt="" />
     <!-- <PostEditor v-if="state.userID" :userID="+state.userID" type="Post" />
     <div
       class="spinner-border text-light mt-3"
