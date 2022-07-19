@@ -19,7 +19,7 @@
         />
       </div>
       <div
-        @click="goTodoPage"
+        @click="goTodoPage()"
         class="w-100 fw-bold cursor-pointer"
         :class="state.checkBox ? 'line-through' : ''"
         v-if="!state.edit"
@@ -127,7 +127,9 @@ export default {
         else {
           state.error = 'Ocorreu um erro tente novamente.';
         }
-      } else {
+      }
+      // UPDATE LIST
+      else {
         const updateList = {
           _id: state.id,
           name: state.title,

@@ -1,52 +1,52 @@
-import { requestApi } from '.'
+import { requestApi } from '.';
 
 export default () => ({
   getAllLists: () => {
-    const url = 'list'
-    const response = requestApi(url, 'get')
+    const url = 'list';
+    const response = requestApi(url, 'get');
 
-    return response
+    return response;
   },
   createList: (data) => {
-    const url = 'list'
-    const response = requestApi(url, 'post', data)
+    const url = 'list';
+    const response = requestApi(url, 'post', data);
 
-    return response
+    return response;
   },
   deleteList: (id) => {
-    const url = `list/${id}`
-    const response = requestApi(url, 'delete')
+    const url = `list/${id}`;
+    const response = requestApi(url, 'delete');
 
-    return response
+    return response;
   },
   updateList: (data) => {
-    const url = `list/${data._id}`
-    const response = requestApi(url, 'patch', data)
+    const url = `list/${data._id}`;
+    const response = requestApi(url, 'patch', data);
 
-    return response
+    return response;
   },
   createTodo: (id, data) => {
-    const url = `list/${id}/item`
-    const response = requestApi(url, 'post', data)
+    const url = `list/${id}/item`;
+    const response = requestApi(url, 'post', data);
 
-    return response
+    return response;
   },
   getUserTodo: (listId) => {
-    const url = `list/${listId}/item/`
-    const response = requestApi(url, 'get')
+    const url = `list/${listId}/item/`;
+    const response = requestApi(url, 'get');
 
-    return response
+    return response;
   },
-  updateTodo: (todoID, data) => {
-    const url = `/todos/${todoID}/`
-    const response = requestApi(url, 'put', data)
+  updateTodo: (listId, data) => {
+    const url = `list/${listId}/item/`;
+    const response = requestApi(url, 'patch', { itens: data });
 
-    return response
+    return response;
   },
   deleteTodo: (todoID) => {
-    const url = `/todos/${todoID}/`
-    const response = requestApi(url, 'delete')
+    const url = `/todos/${todoID}/`;
+    const response = requestApi(url, 'delete');
 
-    return response
-  }
-})
+    return response;
+  },
+});

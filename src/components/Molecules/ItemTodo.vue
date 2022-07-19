@@ -3,14 +3,14 @@
     <div class="icon" v-if="!state.edit" @click="state.edit = !state.edit">
       <img src="@/assets/icons/icon-pen.png" alt="pen" />
     </div>
-    <div class="icon" v-else @click="saveChanges(true)">
+    <div class="icon" v-else @click="saveChanges()">
       <img src="@/assets/icons/icon-save.png" alt="save" />
     </div>
     <div class="form-control text-start d-flex">
       <div class="d-flex flex-column w-100" v-if="state.edit">
         <label for="todo">Descreva a tarefa</label>
         <input
-          @keyup.enter="saveChanges(true)"
+          @keyup.enter="saveChanges()"
           placeholder="Nova Tarefa"
           class="w-100"
           type="text"
@@ -35,7 +35,7 @@
       <div
         class="icon mx-2"
         data-bs-toggle="modal"
-        :data-bs-target="`#staticBackdrop${index}`"
+        :data-bs-target="`#staticBackdrop${state._id}`"
       >
         <img src="@/assets/icons/icon-trash.png" alt="trash" />
       </div>
@@ -44,7 +44,7 @@
     <!-- Modal -->
     <div
       class="modal fade"
-      :id="`staticBackdrop${index}`"
+      :id="`staticBackdrop${state._id}`"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
@@ -84,11 +84,12 @@
       </div>
     </div>
   </div>
+  <p class="error mt-5" v-if="state.error">{{ state.error }}</p>
 </template>
 <script>
 import { reactive, watch } from 'vue';
 import services from '@/services';
-import { deleteTodo } from '@/store/todos';
+import { deleteTodoItem, newTodoItem } from '@/store/todos';
 
 export default {
   props: {
@@ -96,16 +97,16 @@ export default {
       type: Object,
     },
     listId: {
-      type: Number,
+      type: String,
     },
   },
-  setup(props, context) {
+  emits: ['updateToDo'],
+  setup(props, { emit }) {
     const state = reactive({
       id: props.item.id,
-      user_id: props.item.user_id,
       name: props.item.name,
-      due_on: props.item.due_on,
       checked: props.item.checked,
+      author: props.item?.author,
       edit: !!props.item.edit,
       checkBox: false,
       listId: props.listId,
@@ -116,28 +117,51 @@ export default {
     watch(
       () => state.checkBox,
       () => {
-        context.emit('updateToDo');
+        emit('updateToDo');
       }
     );
 
-    async function saveChanges(changeEdit) {
-      if (changeEdit) state.edit = !state.edit;
-      const item = {
-        name: state.name,
-        due_on: state.due_on,
-        checked: state.checkBox,
-      };
-      const newItem = {
-        ...item,
-      };
-      const response = await services.todos.createTodo(state.listId, newItem);
-      console.log(response);
-      // state.id = response.data.id
+    async function saveChanges() {
+      state.error = null;
+      state.loading = true;
+
+      // FOR NEW ITEM
+      if (state.id.split('-')[0] === 'NewItem') {
+        const newItem = {
+          name: state.name,
+          checked: state.checkBox,
+        };
+        //Send request
+        const response = await services.todos.createTodo(state.listId, newItem);
+
+        //If sucess
+        if (response.status && response.status === 201) {
+          newTodoItem(state.listId, response.data.newItem);
+          deleteTodoItem(state.listId, state.id);
+        }
+        //If error
+        else if (response.data?.message) {
+          state.error = response.data.message;
+        }
+        //Else unknown erros
+        else {
+          state.error = 'Ocorreu um erro tente novamente.';
+        }
+      } else {
+        const updateItem = {
+          name: state.name,
+          checked: state.checkBox,
+          id: state.id,
+          author: state.id,
+        };
+        emit('updateToDo', updateItem);
+        state.edit = false;
+      }
     }
 
     async function deleteItem() {
-      if (state.id) await services.todos.deleteTodo(state.id);
-      deleteTodo(props.item.fake_id);
+      deleteTodoItem(state.listId, state.id);
+      emit('updateToDo');
     }
     return {
       state,
