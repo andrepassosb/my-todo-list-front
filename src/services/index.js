@@ -1,31 +1,33 @@
-import axios from 'axios'
-import UsersService from './users'
-import PostService from './posts'
-import CommentService from './comments'
-import TodosService from './todos'
+import axios from 'axios';
+import UsersService from './users';
+import PostService from './posts';
+import CommentService from './comments';
+import TodosService from './todos';
 
-const baseURL = 'http://18.231.4.84/'
+const baseURL = 'https://mylist-node-todo.herokuapp.com/';
 
-export async function requestApi (url, type, data = '') {
-  const token = sessionStorage.getItem('access_token')
-  const response = await new Promise(resolve => {
+export async function requestApi(url, type, data = '') {
+  const token = sessionStorage.getItem('access_token');
+  const response = await new Promise((resolve) => {
     axios({
       method: type,
       url: baseURL + url,
       data: data,
       headers: {
-        Authorization: 'Bearer ' + token
-      }
-    }).then(response => {
-      resolve(response)
-    }).catch(error => {
-      resolve(error.response)
+        Authorization: 'Bearer ' + token,
+      },
     })
-  })
-  return responseData(response)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        resolve(error.response);
+      });
+  });
+  return responseData(response);
 }
 
-function responseData (response) {
+function responseData(response) {
   // let menssage = null
   // if (!response.data) {
   //   menssage = {
@@ -36,12 +38,12 @@ function responseData (response) {
   return {
     data: response.data,
     status: response.request.status,
-  }
+  };
 }
 
 export default {
   users: UsersService(),
   posts: PostService(),
   comments: CommentService(),
-  todos: TodosService()
-}
+  todos: TodosService(),
+};
