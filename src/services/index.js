@@ -4,7 +4,7 @@ import PostService from './posts';
 import CommentService from './comments';
 import TodosService from './todos';
 
-const baseURL = 'https://mylist-node-todo.herokuapp.com/';
+const baseURL = 'http://localhost:3000/';
 
 export async function requestApi(url, type, data = '') {
   const token = sessionStorage.getItem('access_token');
