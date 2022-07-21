@@ -20,14 +20,14 @@
       </div>
       <div
         class="w-100 fw-bold"
-        :class="state.checkBox ? 'line-through' : ''"
+        :class="state.checked ? 'line-through' : ''"
         v-if="!state.edit"
       >
         {{ state.name }}
       </div>
       <input
         class="ms-2 form-check-input"
-        v-model="state.checkBox"
+        v-model="state.checked"
         type="checkbox"
         name="checked"
         id="completed"
@@ -117,7 +117,14 @@ export default {
     watch(
       () => state.checkBox,
       () => {
-        emit('updateToDo');
+        const updateItem = {
+          name: state.name,
+          checked: state.checkBox,
+          id: state.id,
+          author: state.id,
+        };
+        emit('updateToDo', updateItem);
+        state.edit = false;
       }
     );
 
