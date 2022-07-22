@@ -66,7 +66,7 @@ export default {
         const response = await services.users.loginUser(data);
         if (response.status && response.status === 200) {
           state.sucess = response.data.message;
-          sessionStorage.setItem('access_token', response.data.token);
+          localStorage.setItem('access_token', response.data.token);
           router.push({ name: 'list' });
         } else if (response.data?.message) {
           state.error = response.data.message;

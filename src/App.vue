@@ -19,13 +19,13 @@ export default {
     const route = useRoute();
     const store = useStore();
     const state = reactive({
-      hasUserId: !!sessionStorage.getItem('access_token'),
+      hasUserId: !!localStorage.getItem('access_token'),
       loadingHome: false,
     });
     watch(
       () => route.path,
       async () => {
-        state.hasUserId = !!sessionStorage.getItem('access_token');
+        state.hasUserId = !!localStorage.getItem('access_token');
       }
     );
 

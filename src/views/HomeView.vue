@@ -43,7 +43,7 @@ export default {
   setup(props) {
     const store = useStore();
     const state = reactive({
-      userID: sessionStorage.getItem('access_token'),
+      userID: localStorage.getItem('access_token'),
     });
 
     return {

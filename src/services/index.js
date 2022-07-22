@@ -7,7 +7,7 @@ import TodosService from './todos';
 const baseURL = 'https://my-todo-list-kappa.vercel.app/';
 
 export async function requestApi(url, type, data = '') {
-  const token = sessionStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token');
   const response = await new Promise((resolve) => {
     axios({
       method: type,

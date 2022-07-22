@@ -49,7 +49,7 @@ export default {
     const route = useRoute();
     const store = useStore();
 
-    const userID = sessionStorage.getItem('access_token');
+    const userID = localStorage.getItem('access_token');
 
     const postId = route.params.postId;
 
