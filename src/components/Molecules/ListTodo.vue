@@ -17,6 +17,14 @@
           v-model="state.title"
           required
         />
+        <input
+          @keyup.enter="saveChanges(true)"
+          placeholder="Insira um email para compartilhar"
+          class="w-100"
+          type="text"
+          v-model="state.users"
+          required
+        />
       </div>
       <div
         @click="goTodoPage()"
@@ -100,6 +108,7 @@ export default {
 
     const state = reactive({
       title: props.item.name,
+      users: props.item.users,
       edit: !!props.item.edit,
       id: props.item._id,
     });
@@ -133,7 +142,7 @@ export default {
         const updateList = {
           _id: state.id,
           name: state.title,
-          users: state.users,
+          users: state.users.split(';'),
         };
         updateTodo(updateList);
         await services.todos.updateList(updateList);
