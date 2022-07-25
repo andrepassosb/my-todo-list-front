@@ -35,7 +35,7 @@
       <div
         class="icon mx-2"
         data-bs-toggle="modal"
-        :data-bs-target="`#staticBackdrop${state._id}`"
+        :data-bs-target="`#staticBackdrop${state.id}`"
       >
         <img src="@/assets/icons/icon-trash.png" alt="trash" />
       </div>
@@ -44,17 +44,19 @@
     <!-- Modal -->
     <div
       class="modal fade"
-      :id="`staticBackdrop${state._id}`"
+      :id="`staticBackdrop${state.id}`"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
-      aria-labelledby="staticBackdropLabel"
+      :aria-labelledby="`staticBackdropLabel${state.id}`"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-name" id="staticBackdropLabel">Deletar Tarefa</h5>
+            <h5 class="modal-name" :id="`staticBackdropLabel${state.id}`">
+              Deletar Tarefa
+            </h5>
             <button
               type="button"
               class="btn-close"
