@@ -1,25 +1,33 @@
 <template>
-  <div class="TodoView">
+  <div class="ListView">
     <div class="page-title d-flex">
       <h2 class="my-auto">Listas</h2>
     </div>
-    <button
-      @click="addList"
-      :disabled="state.loading"
-      class="btn btn-primary rounded-pill"
-    >
-      <div
-        class="spinner-border text-light"
-        v-if="state.loading"
-        role="status"
-      ></div>
-      Criar Lista
-    </button>
-    <ListTodo
-      v-for="item in store.Todos.allTodos"
-      :key="item._id"
-      :item="item"
-    />
+    <template v-if="state.loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </template>
+    <template v-if="!state.loading">
+      <button
+        @click="addList"
+        :disabled="state.loading"
+        class="btn btn-primary rounded-pill"
+      >
+        <div
+          class="spinner-border text-light"
+          v-if="state.loading"
+          role="status"
+        ></div>
+        Criar Lista
+      </button>
+
+      <ListTodo
+        v-for="item in store.Todos.allTodos"
+        :key="item._id"
+        :item="item"
+      />
+    </template>
   </div>
 </template>
 
@@ -45,10 +53,12 @@ export default {
 
     onBeforeMount(async () => {
       cleanTodos();
+      state.loading = true;
       const { data } = await services.todos.getAllLists();
       if (data && data.lists) {
         setTodo(data.lists);
       }
+      state.loading = false;
     });
 
     async function addList() {

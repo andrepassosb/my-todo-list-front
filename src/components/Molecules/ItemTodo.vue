@@ -19,15 +19,16 @@
         />
       </div>
       <div
-        class="w-100 fw-bold"
-        :class="state.checked ? 'line-through' : ''"
+        class="w-100 fw-bold cursor-pointer"
+        @click="state.checkBox = !state.checkBox"
+        :class="state.checkBox ? 'line-through' : ''"
         v-if="!state.edit"
       >
         {{ state.name }}
       </div>
       <input
         class="ms-2 form-check-input"
-        v-model="state.checked"
+        v-model="state.checkBox"
         type="checkbox"
         name="checked"
         id="completed"
@@ -35,7 +36,7 @@
       <div
         class="icon mx-2"
         data-bs-toggle="modal"
-        :data-bs-target="`#staticBackdrop${state.id}`"
+        :data-bs-target="`#staticBackdrop${state._id}`"
       >
         <img src="@/assets/icons/icon-trash.png" alt="trash" />
       </div>
@@ -44,19 +45,17 @@
     <!-- Modal -->
     <div
       class="modal fade"
-      :id="`staticBackdrop${state.id}`"
+      :id="`staticBackdrop${state._id}`"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
-      :aria-labelledby="`staticBackdropLabel${state.id}`"
+      aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-name" :id="`staticBackdropLabel${state.id}`">
-              Deletar Tarefa
-            </h5>
+            <h5 class="modal-name" id="staticBackdropLabel">Deletar Tarefa</h5>
             <button
               type="button"
               class="btn-close"
@@ -121,7 +120,7 @@ export default {
       () => {
         const updateItem = {
           name: state.name,
-          checked: state.checkBox,
+          checked: state.checkBox ? 'completed' : 'false',
           id: state.id,
           author: state.id,
         };

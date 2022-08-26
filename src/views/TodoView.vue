@@ -3,25 +3,32 @@
     <div class="page-title d-flex">
       <h2 class="my-auto">{{ state.list.name }}</h2>
     </div>
-    <button
-      @click="addItem"
-      :disabled="state.loading"
-      class="btn btn-primary rounded-pill"
-    >
-      <div
-        class="spinner-border text-light"
-        v-if="state.loading"
-        role="status"
-      ></div>
-      Adicionar Item
-    </button>
-    <ItemTodo
-      v-for="(item, index) in itensToDo"
-      :key="`${item?.id}-${index}`"
-      :item="item"
-      :listId="listId"
-      @updateToDo="updateTodo($event)"
-    />
+    <template v-if="state.loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </template>
+    <template v-if="!state.loading">
+      <button
+        @click="addItem"
+        :disabled="state.loading"
+        class="btn btn-primary rounded-pill"
+      >
+        <div
+          class="spinner-border text-light"
+          v-if="state.loading"
+          role="status"
+        ></div>
+        Adicionar Item
+      </button>
+      <ItemTodo
+        v-for="(item, index) in itensToDo"
+        :key="`${item?.id}-${index}`"
+        :item="item"
+        :listId="listId"
+        @updateToDo="updateTodo($event)"
+      />
+    </template>
     <p class="error mt-5" v-if="state.error">{{ state.error }}</p>
   </div>
 </template>
@@ -47,10 +54,13 @@ export default {
       itemsTodo: [],
       list: {},
       error: null,
+      loading: false,
     });
 
     onBeforeMount(async () => {
       state.error = null;
+      state.loading = true;
+
       const response = await services.todos.getUserTodo(listId);
       if (response.data && response.data.list) {
         state.list = response.data.list;
@@ -59,6 +69,7 @@ export default {
       } else if (response.data.message) {
         state.error = response.data.message;
       }
+      state.loading = false;
     });
 
     async function addItem() {
