@@ -39,7 +39,7 @@ import ItemTodo from '@/components/Molecules/ItemTodo.vue';
 import useStore from '@/hooks/useStore';
 import services from '@/services';
 import { useRouter } from 'vue-router';
-import { setTodo, newTodoItem } from '@/store/todos';
+import { setTodo, newTodoItem, updateTodoItem } from '@/store/todos';
 
 export default {
   name: 'TodoView',
@@ -84,18 +84,8 @@ export default {
     }
 
     async function updateTodo(itemUpdate) {
-      const list = store.Todos.allTodos.filter((e) => e?._id == listId)[0];
-      let itens = list?.itens ? list?.itens : [];
-      if (itemUpdate) {
-        itens = itens.map((e) => {
-          if (e.id == itemUpdate.id) {
-            return itemUpdate;
-          } else {
-            return e;
-          }
-        });
-      }
-      await services.todos.updateTodo(listId, itens);
+      const listUpdate = updateTodoItem(listId, itemUpdate);
+      await services.todos.updateTodo(listId, listUpdate);
     }
 
     const itensToDo = computed(() => {

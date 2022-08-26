@@ -1,4 +1,7 @@
 <template>
+  <Transition>
+    <p class="error mt-5" v-if="state.error">{{ state.error }}</p>
+  </Transition>
   <div class="d-flex px-4 align-items-center mb-2 mt-3" :id="state.id">
     <div class="icon" v-if="!state.edit" @click="state.edit = !state.edit">
       <img src="@/assets/icons/icon-pen.png" alt="pen" />
@@ -34,7 +37,13 @@
       >
         {{ state.title }}
       </div>
+      <template v-if="state.loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </template>
       <div
+        v-else
         class="icon mx-2"
         data-bs-toggle="modal"
         :data-bs-target="`#staticBackdrop${state.id}`"
@@ -86,7 +95,6 @@
       </div>
     </div>
   </div>
-  <p class="error" v-if="state.error">{{ state.error }}</p>
 </template>
 <script>
 import { reactive } from 'vue';
@@ -139,16 +147,40 @@ export default {
       }
       // UPDATE LIST
       else {
+        if (state.users.includes(',')) {
+          state.users = state.users.split(',').map((e) => e.trim());
+        }
         const updateList = {
           _id: state.id,
           name: state.title,
-          users: state.users.split(';'),
+          users: state.users,
         };
-        updateTodo(updateList);
-        await services.todos.updateList(updateList);
+        //Send request
+        const response = await services.todos.updateList(updateList);
+        if (response.status && response.status == 201) {
+          updateTodo(updateList);
+        }
+        //If error
+        else if (response?.status !== 200 && response.data?.message) {
+          resetState();
+          state.error = response.data.message;
+        }
+        //Else unknown erros
+        else {
+          resetState();
+          state.error = 'Ocorreu um erro tente novamente.';
+        }
         state.edit = false;
       }
+      setTimeout(() => {
+        state.error = false;
+      }, 1500);
       state.loading = false;
+    }
+
+    function resetState() {
+      state.title = props.item.name;
+      state.users = props.item.users;
     }
 
     async function deleteItem() {
@@ -205,5 +237,7 @@ label {
 }
 .error {
   color: #ef6a6a;
+  margin: 0 !important;
+  transform: translateY(10px);
 }
 </style>
