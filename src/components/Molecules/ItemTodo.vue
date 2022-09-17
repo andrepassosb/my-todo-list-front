@@ -36,7 +36,7 @@
       <div
         class="icon mx-2"
         data-bs-toggle="modal"
-        :data-bs-target="`#staticBackdrop${state._id}`"
+        :data-bs-target="`#staticBackdrop${state.id}`"
       >
         <img src="@/assets/icons/icon-trash.png" alt="trash" />
       </div>
@@ -45,7 +45,7 @@
     <!-- Modal -->
     <div
       class="modal fade"
-      :id="`staticBackdrop${state._id}`"
+      :id="`staticBackdrop${state.id}`"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
