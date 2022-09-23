@@ -22,7 +22,7 @@
         />
         <input
           @keyup.enter="saveChanges(true)"
-          placeholder="Insira um email para compartilhar"
+          placeholder="Insira um emails para compartilhar."
           class="w-100"
           type="text"
           v-model="state.users"
@@ -148,7 +148,25 @@ export default {
       // UPDATE LIST
       else {
         if (state.users.includes(',')) {
-          state.users = state.users.split(',').map((e) => e.trim());
+          state.users = state.users
+            .split(',')
+            .map((e) => {
+              if (e !== '') {
+                return e.trim();
+              }
+            })
+            .filter((n) => n);
+        } else if (state.users.includes(';')) {
+          state.users = state.users
+            .split(';')
+            .map((e) => {
+              if (e !== '') {
+                return e.trim();
+              }
+            })
+            .filter((n) => n);
+        } else {
+          state.users = [state.users];
         }
         const updateList = {
           _id: state.id,
